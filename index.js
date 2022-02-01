@@ -32,6 +32,16 @@ app.get('/api/info', (request, response) => {
     response.send(`Phonebook has info for ${persons.length} people. </br> ${new Date()}`)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+    const person = persons.filter(person => person.id === parseInt(request.params.id))
+
+    if (person.length === 0) return response.status(400).json({
+        error: `No person with id ${request.params.id} found`
+    })
+
+    response.json(person)
+})
+
 const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
