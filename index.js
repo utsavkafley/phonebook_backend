@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 let persons = [
   {
     id: 1,
@@ -44,6 +46,16 @@ app.get("/api/persons/:id", (request, response) => {
       error: `No person with id ${request.params.id} found`,
     });
 
+  response.json(person);
+});
+
+app.post("/api/persons", (request, response) => {
+  const person = request.body;
+  const id = Math.floor(Math.random() * 100);
+
+  person.id = id;
+
+  persons = persons.concat(person);
   response.json(person);
 });
 
