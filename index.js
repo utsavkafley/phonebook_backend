@@ -50,13 +50,24 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
-  const person = request.body;
-  const id = Math.floor(Math.random() * 100);
+  const newPerson = request.body;
 
-  person.id = id;
+  if (newPerson.name && newPerson.number) {
+    if (persons.some((person) => person.name === newPerson.name))
+      return response.status(400).json({
+        error: "Name for new entry must be unique",
+      });
+    const id = Math.floor(Math.random() * 100);
 
-  persons = persons.concat(person);
-  response.json(person);
+    newPerson.id = id;
+
+    persons = persons.concat(newPerson);
+    response.json(newPerson);
+  } else {
+    return response.status(400).json({
+      error: "Name/number missing fron entry. Please try again!",
+    });
+  }
 });
 
 app.delete("/api/persons/:id", (request, response) => {
