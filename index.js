@@ -1,5 +1,10 @@
 const express = require("express");
 const app = express();
+var morgan = require("morgan");
+
+morgan.token("data", function (req, res) {
+  return JSON.stringify(req.body);
+});
 
 app.use(express.json());
 
@@ -25,6 +30,22 @@ let persons = [
     number: "39-23-6423122",
   },
 ];
+
+app.use(morgan("tiny")); //Using a preset format from morgan documentation
+
+app.use(
+  //This utilized the data token defined earlier in the page which returns us the request body.
+  morgan(
+    function (tokens, req, res) {
+      return [tokens.data(req, res)];
+    },
+    {
+      skip: function (req, res) {
+        return req.method != "POST"; //we are using the skip option to only display body of post requests.
+      },
+    }
+  )
+);
 
 app.get("/api/persons/", (request, response) => {
   response.json(persons);
